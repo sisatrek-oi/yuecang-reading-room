@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3eee3"><title>阅藏 · 主题资料书房</title><link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./world.css"><script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}</script></head>
+<body class="room-mode">
+  <div id="room-viewport"><canvas id="room-canvas" aria-label="三维书房，可点击书本和档案夹"></canvas></div>
+  <div id="room-loading"><span class="loading-ring"></span><p>正在点亮书房</p></div>
+  <a href="#main" class="skip-link">跳到主要内容</a>
+  <header id="header"></header>
+  <main id="main" tabindex="-1"></main>
+  <footer id="footer"></footer>
+  <div id="transitions" aria-hidden="true"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <dialog id="detail-dialog" aria-labelledby="detail-title"></dialog>
+  <dialog id="share-dialog" aria-labelledby="share-title"><button class="icon-button share-close" aria-label="关闭分享窗口">×</button><p class="eyebrow">SHARE THIS PLACE</p><h2 id="share-title">把这一页分享出去</h2><p>复制下面的地址，即可直接来到当前页面。</p><label for="share-url">页面链接</label><input id="share-url" readonly><p class="muted small">分享链接可直达当前资料。</p></dialog>
+  <noscript>书房的交互需要启用 JavaScript。启用后可浏览主题、分类和资料。</noscript>
+  <script type="module" src="./app.mjs"></script>
+</body></html>
