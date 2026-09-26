@@ -2,4 +2,6 @@
 
 三维书架展示《长征》和《一脉相承·与时俱进》两本主题书。本站由本地项目生成，使用 Three.js 0.180.0（许可证见 THREE-LICENSE.txt）。
 
+公开访问：https://sisatrek-oi.github.io/yuecang-reading-room/
+
 公开版提供资料索引、自写说明和来源站链接；第三方原文与用户提供的 DOCX 未纳入本仓库。
