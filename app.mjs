@@ -55,7 +55,7 @@ function archiveView(){
   const literature=['literature','sources'].includes(category.id);
   const suggestions=category.id==='sources'?['毛泽东','邓小平','待核','统计公报']:['会师','遵义会议','长征精神','会宁'];
   const searchTools=literature?`<div class="search-tools"><div class="suggested-searches"><span>试试检索</span>${suggestions.map(word=>link({page:'category',category:category.id,query:word},word,query===word?'active':'')).join('')}</div><p>${category.id==='sources'?'检索标题、作者、原著录、主题与核对说明；原文请从资料详情的出处链接访问，全文不参与站内检索。':'检索本站收录的标题、整理词、来源、导读与本站说明；原文全文尚未导入。'}</p></div><nav class="theme-groups" aria-label="按文献主题整理结果"><span>按主题整理</span>${link({page:'category',category:category.id,query},`全部 <small>${results.length}</small>`,!group?'active':'',!group?'aria-current="true"':'')}${[...counts].map(([theme,count])=>link({page:'category',category:category.id,query,group:theme},`${escape(theme)} <small>${count}</small>`,group===theme?'active':'',group===theme?'aria-current="true"':'')).join('')}</nav>`:'';
-  return `<section class="archive-view" aria-labelledby="archive-title"><div class="archive-top"><div class="archive-topline">${link({page:'desk'},'← 返回书桌','back-link')}<p class="eyebrow">${escape(currentTopic.shortTitle||currentTopic.title)} / COLLECTION 001</p></div><div class="archive-title">${icon('folder','mini-folder')}<div><h1 id="archive-title">${category.title}</h1><p class="archive-description">${category.desc}</p></div></div><div class="archive-nav"><nav class="category-tabs" aria-label="资料分类">${categories.map(c=>link({page:'category',category:c.id},`${c.title}<small>${inCategory(c.id,currentTopic.id).length}</small>`,c.id===category.id?'active':'',c.id===category.id?'aria-current="page"':'')).join('')}</nav><form class="search-form" role="search"><label class="sr-only" for="search">搜索当前分类</label><input id="search" name="q" type="search" value="${escape(route.query||'')}" placeholder="${literature?'搜索文献关键词…':'在这个档案夹中查找…'}" maxlength="150"><button type="submit" aria-label="搜索">${icon('search')}</button></form></div>${searchTools}<div class="archive-help"><span>${category.id==='sources'?'<span class="verified-chip">公开展示 · 原文请访问来源站</span>':literature?'<span class="verified-chip">公开参考文献</span>':'<span class="demo-chip">演示条目 · 待接入真实资料</span>'} <span class="results-count" role="status">${visibleItems.length} 份${query?'匹配':''}资料${group?` · ${escape(group)}`:''}</span></span><span class="hint-drag">拖动卡片，或使用左右箭头浏览</span></div></div>${visibleItems.length?`<div class="rail-wrap"><div class="card-rail" tabindex="0" role="region" aria-label="资料卡片，使用左右方向键浏览">${visibleResults.map(card).join('')}</div></div><div class="rail-controls"><button class="icon-button" data-action="previous" aria-label="上一张资料">${icon('left')}</button><span class="card-position" aria-live="polite"><strong>01</strong> / ${String(visibleItems.length).padStart(2,'0')}</span><button class="icon-button" data-action="next" aria-label="下一张资料">${icon('right')}</button></div>`:`<div class="empty-state"><p class="eyebrow">NO MATCHING RECORDS</p><h2>这一夹里，暂时没有找到。</h2><p>试试更短的关键词，或返回全部资料。</p>${link({page:'category',category:category.id},'查看全部资料','secondary-link')}</div>`}</section>`;
+  return `<section class="archive-view" aria-labelledby="archive-title"><div class="archive-top"><div class="archive-topline">${link({page:'desk'},'← 返回书桌','back-link')}<p class="eyebrow">${escape(currentTopic.shortTitle||currentTopic.title)} / COLLECTION 001</p></div><div class="archive-title">${icon('folder','mini-folder')}<div><h1 id="archive-title">${category.title}</h1><p class="archive-description">${category.desc}</p></div></div><div class="archive-nav"><nav class="category-tabs" aria-label="资料分类">${categories.map(c=>link({page:'category',category:c.id},`${c.title}<small>${inCategory(c.id,currentTopic.id).length}</small>`,c.id===category.id?'active':'',c.id===category.id?'aria-current="page"':'')).join('')}</nav><form class="search-form" role="search"><label class="sr-only" for="search">搜索当前分类</label><input id="search" name="q" type="search" value="${escape(route.query||'')}" placeholder="${literature?'搜索文献关键词…':'在这个档案夹中查找…'}" maxlength="150"><button type="submit" aria-label="搜索">${icon('search')}</button></form></div>${searchTools}<div class="archive-help"><span>${category.id==='sources'?'<span class="verified-chip">公开展示 · 原文请访问来源站</span>':literature?'<span class="verified-chip">公开参考文献</span>':'<span class="demo-chip">演示条目 · 待接入真实资料</span>'} <span class="results-count" role="status">${visibleItems.length} 份${query?'匹配':''}资料${group?` · ${escape(group)}`:''}</span></span><span class="hint-drag">拖动圆盘、滚动鼠标或按左右键切换</span></div></div>${visibleItems.length?`<div class="rail-wrap"><div class="carousel-platter" aria-hidden="true"></div><div class="card-rail" tabindex="0" role="region" aria-roledescription="资料圆盘" aria-label="资料圆盘，使用左右方向键旋转，回车打开正前方资料">${visibleResults.map(card).join('')}</div></div><div class="rail-controls"><button class="icon-button" data-action="previous" aria-label="上一张资料">${icon('left')}</button><span class="card-position" aria-live="polite"><strong>01</strong> / ${String(visibleItems.length).padStart(2,'0')}</span><button class="icon-button" data-action="next" aria-label="下一张资料">${icon('right')}</button></div>`:`<div class="empty-state"><p class="eyebrow">NO MATCHING RECORDS</p><h2>这一夹里，暂时没有找到。</h2><p>试试更短的关键词，或返回全部资料。</p>${link({page:'category',category:category.id},'查看全部资料','secondary-link')}</div>`}</section>`;
 }
 function originalReader(item){
   const record=originalCatalog[item.id];
@@ -127,38 +127,97 @@ function render(){
 
 function setupRail(){
   const rail=$('.card-rail'),cards=[...rail.querySelectorAll('.material-card')];
-  let timer,restoring=true,drag=null,preventClick=false,unlockTimer,disposed=false;
+  const platter=$('.carousel-platter');
+  let drag=null,preventClick=false,unlockTimer,disposed=false,lastWheel=0;
   const railCategory=route.category;
   activeIndex=Math.max(0,visibleItems.findIndex(x=>x.id===route.focus));
-  const leftFor=index=>cards[index].offsetLeft-(rail.clientWidth-cards[index].offsetWidth)/2;
+  const wrappedDistance=(index,center)=>{
+    let distance=index-center;
+    if(distance>cards.length/2)distance-=cards.length;
+    if(distance<-cards.length/2)distance+=cards.length;
+    return distance;
+  };
   function update(index,write=true){
     if(disposed)return;
-    activeIndex=Math.max(0,Math.min(cards.length-1,index));
-    cards.forEach((c,i)=>c.classList.toggle('active',i===activeIndex));
+    activeIndex=(index%cards.length+cards.length)%cards.length;
+    const narrow=rail.clientWidth<700;
+    const radius=Math.min(440,rail.clientWidth*(narrow?.83:.41));
+    const depth=narrow?315:510;
+    const limit=narrow?1:2;
+    cards.forEach((card,i)=>{
+      const step=wrappedDistance(i,activeIndex);
+      const nearby=Math.abs(step)<=limit;
+      const angle=step*(narrow?49:42)*Math.PI/180;
+      card.classList.toggle('active',step===0);
+      card.classList.toggle('offstage',!nearby);
+      card.style.setProperty('--carousel-x',`${Math.round(Math.sin(angle)*radius)}px`);
+      card.style.setProperty('--carousel-y',`${Math.round((1-Math.cos(angle))*19)}px`);
+      card.style.setProperty('--carousel-z',`${Math.round((Math.cos(angle)-1)*depth)}px`);
+      card.style.setProperty('--carousel-angle',`${Math.round(-step*(narrow?29:26))}deg`);
+      card.style.setProperty('--carousel-opacity',step===0?'1':Math.abs(step)===1?'.84':'.5');
+      card.style.zIndex=String(50-Math.abs(step));
+      card.inert=!nearby;
+      card.setAttribute('aria-hidden',nearby?'false':'true');
+      card.querySelector('.card-open').tabIndex=step===0?0:-1;
+    });
+    platter.style.setProperty('--disc-turn',`${-activeIndex*14}deg`);
     $('.card-position').innerHTML=`<strong>${String(activeIndex+1).padStart(2,'0')}</strong> / ${String(cards.length).padStart(2,'0')}`;
-    $('[data-action="previous"]').disabled=activeIndex===0;
-    $('[data-action="next"]').disabled=activeIndex===cards.length-1;
+    $('[data-action="previous"]').disabled=cards.length===1;
+    $('[data-action="next"]').disabled=cards.length===1;
     const address=parseRoute(location.hash);
     if(write&&route.page==='category'&&address.page==='category'&&address.topic===route.topic&&address.category===railCategory){
       route.focus=visibleItems[activeIndex].id;
       history.replaceState(null,'',routeURL(route));
     }
   }
-  function scroll(){if(disposed)return;clearTimeout(timer);timer=setTimeout(()=>{if(restoring||disposed)return;const center=rail.scrollLeft+rail.clientWidth/2;let nearest=0;cards.forEach((c,i)=>{if(Math.abs(c.offsetLeft+c.offsetWidth/2-center)<Math.abs(cards[nearest].offsetLeft+cards[nearest].offsetWidth/2-center))nearest=i;});update(nearest);},100);}
-  const go=index=>{const next=Math.max(0,Math.min(cards.length-1,index));update(next);rail.scrollTo({left:leftFor(next),behavior:reduced()?'instant':'smooth'});};
+  const go=index=>{if(cards.length>1)update(index);};
   rail._go=go;
-  rail.addEventListener('scroll',scroll,{passive:true});
-  rail.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();go(activeIndex+(e.key==='ArrowRight'?1:-1));}});
-  rail.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&!e.ctrlKey){const d=e.deltaY*(e.deltaMode===1?16:1);if((d<0&&rail.scrollLeft>1)||(d>0&&rail.scrollLeft<rail.scrollWidth-rail.clientWidth-1)){e.preventDefault();rail.scrollLeft+=d;}}},{passive:false});
-  rail.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;drag={x:e.clientX,scroll:rail.scrollLeft,id:e.pointerId};preventClick=false;});
-  const move=e=>{if(!drag)return;const delta=e.clientX-drag.x;if(Math.abs(delta)>6){preventClick=true;rail.classList.add('dragging');rail.scrollLeft=drag.scroll-delta;}};
-  const up=()=>{if(!drag)return;drag=null;rail.classList.remove('dragging');scroll();clearTimeout(unlockTimer);unlockTimer=setTimeout(()=>{preventClick=false;},100);};
+  rail.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+      e.preventDefault();go(activeIndex+(e.key==='ArrowRight'?1:-1));
+    }else if(e.key==='Enter'&&e.target===rail){
+      e.preventDefault();cards[activeIndex].querySelector('.card-open').click();
+    }
+  });
+  rail.addEventListener('wheel',e=>{
+    if(cards.length<2||e.ctrlKey||Math.max(Math.abs(e.deltaY),Math.abs(e.deltaX))<5)return;
+    e.preventDefault();
+    if(performance.now()-lastWheel<180)return;
+    lastWheel=performance.now();
+    go(activeIndex+((Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY)>0?1:-1));
+  },{passive:false});
+  rail.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    drag={x:e.clientX,y:e.clientY,id:e.pointerId};
+  });
+  const move=e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    if(Math.abs(e.clientX-drag.x)>8){preventClick=true;rail.classList.add('dragging');}
+  };
+  const up=e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    const delta=e.clientX-drag.x;
+    if(Math.abs(delta)>42&&Math.abs(delta)>Math.abs(e.clientY-drag.y)){
+      go(activeIndex-(Math.sign(delta)*Math.min(3,Math.max(1,Math.round(Math.abs(delta)/160)))));
+      preventClick=true;
+    }
+    drag=null;rail.classList.remove('dragging');
+    clearTimeout(unlockTimer);
+    unlockTimer=setTimeout(()=>{preventClick=false;},180);
+  };
   window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
-  rail.addEventListener('click',e=>{if(preventClick){e.preventDefault();e.stopPropagation();}},true);
+  rail.addEventListener('click',e=>{
+    if(preventClick){e.preventDefault();e.stopPropagation();preventClick=false;return;}
+    const card=e.target.closest('.material-card');
+    if(card&&!card.classList.contains('active')){
+      e.preventDefault();e.stopPropagation();go(cards.indexOf(card));
+    }
+  },true);
   rail.addEventListener('dragstart',e=>e.preventDefault());
+  const resize=()=>update(activeIndex,false);
+  window.addEventListener('resize',resize);
   update(activeIndex,false);
-  const frame=requestAnimationFrame(()=>{rail.scrollTo({left:leftFor(activeIndex),behavior:'instant'});restoring=false;});
-  cancelRail=()=>{disposed=true;rail.removeEventListener('scroll',scroll);cancelAnimationFrame(frame);clearTimeout(timer);clearTimeout(unlockTimer);window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);};
+  cancelRail=()=>{disposed=true;clearTimeout(unlockTimer);window.removeEventListener('resize',resize);window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);};
 }
 function navigate(target){const hash=routeURL({...target,topic:target.topic||route.topic||topic.id});if(location.hash!==hash)location.hash=hash;}
 function closeDetail(){navigate({page:'category',category:route.category,query:route.query,group:route.group,focus:route.item});}

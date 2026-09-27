@@ -1,0 +1,103 @@
+/* The archive cards stand around a shallow tabletop turntable. */
+.archive-view .rail-wrap{
+  height:510px;
+  margin-top:4px;
+  perspective:none;
+  isolation:isolate;
+}
+.archive-view .rail-wrap::before{display:none}
+.carousel-platter{
+  position:absolute;
+  z-index:0;
+  left:50%;
+  bottom:-99px;
+  width:min(1040px,94%);
+  height:340px;
+  border-radius:50%;
+  border:2px solid #d2b27b99;
+  background:
+    radial-gradient(ellipse at 50% 43%,#b69a6730 0 8%,#342f2499 37%,#0d130fdd 68%,#8f71448a 92%,#d0ad7044 100%),
+    repeating-conic-gradient(from 0deg,#d5b9822e 0deg 1deg,transparent 1deg 15deg);
+  box-shadow:0 0 0 9px #a98c5033,0 0 0 11px #e0c48838,0 35px 40px #000b,inset 0 10px 35px #edcc8840;
+  transform:translateX(-50%) rotateX(68deg) rotateZ(var(--disc-turn,0deg));
+  transition:transform .75s cubic-bezier(.2,.8,.18,1);
+  pointer-events:none;
+}
+.carousel-platter::before{
+  content:"";
+  position:absolute;
+  inset:24px;
+  border-radius:50%;
+  border:1px solid #c5a56a77;
+  box-shadow:0 0 0 27px #161e1555,0 0 0 28px #b99d6860;
+  background:repeating-conic-gradient(from 0deg,#dec28e45 0deg 1deg,transparent 1deg 15deg);
+  mask:radial-gradient(circle,transparent 0 68%,#000 70% 100%);
+}
+.carousel-platter::after{
+  content:"";
+  position:absolute;
+  inset:41%;
+  border-radius:50%;
+  background:#bfa16a;
+  box-shadow:0 0 0 6px #2b2a1c,0 0 0 8px #bc9e61,0 6px 18px #000b;
+}
+#main .archive-view .card-rail{
+  position:relative;
+  z-index:1;
+  display:block;
+  height:100%;
+  padding:0;
+  overflow:visible;
+  scroll-snap-type:none;
+  touch-action:pan-y;
+  perspective:1250px;
+  transform-style:preserve-3d;
+  cursor:grab;
+  pointer-events:none;
+}
+.archive-view .card-rail.dragging{cursor:grabbing}
+.archive-view .material-card,
+.archive-view .material-card.active,
+.archive-view .material-card:nth-child(even):not(.active),
+.folder-opening .archive-view .material-card,
+.folder-opening.folder-reveal .archive-view .material-card{
+  position:absolute;
+  top:18px;
+  left:50%;
+  width:340px;
+  height:425px;
+  min-height:425px;
+  margin-left:-170px;
+  transform:translate3d(var(--carousel-x,0px),var(--carousel-y,0px),var(--carousel-z,0px)) rotateY(var(--carousel-angle,0deg));
+  opacity:var(--carousel-opacity,1);
+  transform-origin:50% 70%;
+  backface-visibility:hidden;
+  box-shadow:0 27px 42px #0009,0 4px 10px #0005;
+  transition:transform .75s cubic-bezier(.2,.8,.18,1),opacity .55s ease,box-shadow .55s ease;
+  will-change:transform;
+  pointer-events:auto;
+}
+.archive-view .material-card.active{box-shadow:0 37px 75px #000c,0 0 0 1px #f6e5ba55}
+.archive-view .material-card.offstage{visibility:hidden;pointer-events:none;opacity:0}
+.archive-view .material-card:not(.active) .card-open{cursor:pointer}
+.archive-view .card-open:focus-visible,.archive-view .card-rail:focus-visible{outline:2px solid #e8c98e;outline-offset:3px}
+.archive-view .rail-controls{position:relative;z-index:3;margin-top:-25px}
+.archive-view .rail-controls button:disabled{opacity:.35}
+.folder-opening .archive-view .rail-wrap{opacity:0;transform:translateY(64px) scale(.94)}
+.folder-opening.folder-reveal .archive-view .rail-wrap{opacity:1;transform:translateY(0) scale(1)}
+.archive-view .rail-wrap{transition:opacity .6s ease,transform .8s cubic-bezier(.22,1,.36,1)}
+@media(max-width:700px){
+  .archive-view .rail-wrap{height:475px}
+  .archive-view .material-card,
+  .archive-view .material-card.active,
+  .archive-view .material-card:nth-child(even):not(.active),
+  .folder-opening .archive-view .material-card,
+  .folder-opening.folder-reveal .archive-view .material-card{
+    top:18px;
+    width:290px;
+    height:425px;
+    margin-left:-145px;
+  }
+  .carousel-platter{width:760px;height:280px;bottom:-80px}
+  .archive-view .rail-controls{margin-top:-18px}
+}
