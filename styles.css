@@ -30,3 +30,8 @@ html[data-motion="off"] *,html[data-motion="off"] *::before,html[data-motion="of
 .text-detail{display:block;min-height:0}
 .text-detail .detail-content{max-width:850px;margin:auto;padding:42px 46px}
 @media(max-width:600px){.text-record{min-height:350px}.text-record .card-open{padding:21px 20px}.text-record h2{font-size:19px}.text-detail .detail-content{padding:36px 23px}}
+
+/* Warm paper-marker color keeps search matches legible inside source cards and details. */
+.search-hit{padding:0 .08em;border-radius:2px;background:#efd17a;color:#382c17;box-shadow:inset 0 -1px 0 #b48c3c;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.card-keywords .search-hit{background:#e8c363}
+.match-preview-label{display:inline-block;margin-right:7px;color:#8c6c31;font-size:10px;letter-spacing:.03em}

@@ -1,11 +1,21 @@
 import {topic,sourceTopic,topics,getTopic,getCategories,getItems,inCategory} from './data.mjs';
 import {parseRoute,routeURL} from './router.mjs';
-import {searchRecords,themeCounts} from './search.mjs';
+import {searchRecords,themeCounts,highlightSegments} from './search.mjs';
 import {originalCatalog} from './original-catalog.mjs';
 
 const $=s=>document.querySelector(s);
 const main=$('#main'), detail=$('#detail-dialog');
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const highlight=value=>highlightSegments(value,route.query).map(({text,matched})=>matched?`<mark class="search-hit">${escape(text)}</mark>`:escape(text)).join('');
+const hasHighlight=value=>highlightSegments(value,route.query).some(segment=>segment.matched);
+function matchedExcerpt(value){
+  const segments=highlightSegments(value,route.query);
+  const index=segments.findIndex(segment=>segment.matched);
+  if(index<0)return '';
+  const before=segments.slice(0,index).map(segment=>segment.text).join('');
+  const after=segments.slice(index+1).map(segment=>segment.text).join('');
+  return `${before.length>22?'…':''}${before.slice(-22)}${segments[index].text}${after.slice(0,55)}${after.length>55?'…':''}`;
+}
 const icons={copy:'M8 8h12v12H8z M16 8V4H4v12h4',motion:'M5 12h3m3 0h3m3 0h3M12 5v3m0 8v3',search:'M20 20l-5-5m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0',left:'M15 5l-7 7 7 7',right:'M9 5l7 7-7 7',external:'M14 4h6v6m0-6L10 14M10 4H4v16h16v-6',folder:'M3 7V4h7l3 3h8v13H3z',book:'M12 5v16M12 5C8 2 4 3 2 4v15c4-1 7-1 10 2 3-3 6-3 10-2V4c-4-1-7-2-10 1',close:'M6 6l12 12M18 6L6 18'};
 const icon=(name,cls='')=>`<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[name]}"/></svg>`;
 const link=(target,label,cls='',extra='')=>`<a href="${routeURL({...target,topic:target.topic||route.topic||topic.id})}" class="${cls}" ${extra}>${label}</a>`;
@@ -33,9 +43,13 @@ function deskView(){return `<section class="room-interface desk-interface" aria-
 function card(result,i){
   const {item,matchedIn}=result;
   const matchNote=route.query?.trim()&&matchedIn.length?`<p class="match-note">匹配于 ${escape(matchedIn.join(' · '))}</p>`:'';
-  const keywords=item.keywords?.length?`<div class="card-keywords" aria-label="整理词">${item.keywords.map(word=>`<span>${escape(word)}</span>`).join('')}</div>`:'';
-  const bibliography=item.bibliography?`<p class="card-bibliography">${escape(item.bibliography)}</p>`:`<p class="card-bibliography">${escape(item.author)} · ${escape(item.source)}</p>`;
-  return `<article class="material-card text-record${i===0?' active':''}" data-item="${item.id}">${link({page:'item',item:item.id,query:route.query,group:route.group},`<div class="card-topline"><span>${item.number?`文献 [${item.number}]`:item.demo?'文字示例 / SAMPLE':escape(item.kind)}</span><span>${String(i+1).padStart(2,'0')}</span></div><h2>${escape(item.title)}</h2>${bibliography}<p class="card-summary">${escape(item.summary)}</p>${keywords}${matchNote}<div class="card-bottom"><span>${item.number?escape(item.verified):item.demo?'资料待收录':escape(item.date)}</span><span class="open-label">查看文字记录 <span class="arrow">↗</span></span></div>`,'card-open',`aria-label="查看${escape(item.title)}详情" draggable="false"`)}</article>`;
+  const keywords=item.keywords?.length?`<div class="card-keywords" aria-label="整理词">${item.keywords.map(word=>`<span>${highlight(word)}</span>`).join('')}</div>`:'';
+  const bibliography=item.bibliography?`<p class="card-bibliography">${highlight(item.bibliography)}</p>`:`<p class="card-bibliography">${highlight(item.author)} · ${highlight(item.source)}</p>`;
+  const visibleFields=[item.title,item.bibliography||`${item.author} ${item.source}`,item.summary,...(item.keywords||[]),...(item.number?[]:[item.kind])];
+  const needsExcerpt=route.query?.trim()&&!visibleFields.some(hasHighlight);
+  const excerpt=needsExcerpt&&(matchedExcerpt(item.body)||(hasHighlight(item.theme)?`主题：${item.theme}`:'')||(hasHighlight(item.source)?`来源：${item.source}`:''));
+  const summary=excerpt?`<span class="match-preview-label">命中说明</span>${highlight(excerpt)}`:highlight(item.summary);
+  return `<article class="material-card text-record${i===0?' active':''}" data-item="${item.id}">${link({page:'item',item:item.id,query:route.query,group:route.group},`<div class="card-topline"><span>${item.number?`文献 [${item.number}]`:item.demo?'文字示例 / SAMPLE':highlight(item.kind)}</span><span>${String(i+1).padStart(2,'0')}</span></div><h2>${highlight(item.title)}</h2>${bibliography}<p class="card-summary">${summary}</p>${keywords}${matchNote}<div class="card-bottom"><span>${item.number?escape(item.verified):item.demo?'资料待收录':escape(item.date)}</span><span class="open-label">查看文字记录 <span class="arrow">↗</span></span></div>`,'card-open',`aria-label="查看${escape(item.title)}详情" draggable="false"`)}</article>`;
 }
 function archiveView(){
   const category=categories.find(c=>c.id===route.category);
@@ -92,12 +106,12 @@ function detailView(){
   const item=items.find(x=>x.id===route.item);
   if(item.number){
     const citations=item.citedParagraphs.join('、');
-    detail.innerHTML=`<div class="detail-shell text-detail"><section class="detail-content"><button class="icon-button detail-close" data-action="close-detail" aria-label="关闭资料详情">${icon('close')}</button><p><span class="demo-chip">${escape(item.verified)}</span></p><h2 id="detail-title">${escape(item.title)}</h2><dl class="detail-meta"><dt>原著录</dt><dd>${escape(item.bibliography)}</dd><dt>主题组</dt><dd>${escape(item.theme)}</dd><dt>正文引用</dt><dd>${item.citationCount} 个段落 · 提取段落 ${escape(citations)}</dd></dl><p class="detail-body"><strong>来源/书目核对：</strong>${escape(item.body)}</p><p class="detail-body"><strong>正文论据：</strong>${escape(item.claimStatus)}。${escape(item.claimNote)}</p><div class="detail-actions">${item.url?`<a href="${escape(item.url)}" target="_blank" rel="noopener noreferrer" class="primary-link">原尾注链接 ${icon('external')}</a>`:'<span class="missing-source">原尾注未附网址</span>'}${item.alternativeUrl?`<a href="${escape(item.alternativeUrl)}" target="_blank" rel="noopener noreferrer" class="secondary-link">补充核对入口 ${icon('external')}</a>`:''}<button class="secondary-link" data-action="share">复制资料链接</button></div>${originalReader(item)}<p class="source-note">核对日期：2026-09-26。原尾注保留原貌；补充入口是核对依据或建议新引文，并不自动替换原著录。</p></section></div>`;
+    detail.innerHTML=`<div class="detail-shell text-detail"><section class="detail-content"><button class="icon-button detail-close" data-action="close-detail" aria-label="关闭资料详情">${icon('close')}</button><p><span class="demo-chip">${escape(item.verified)}</span></p><h2 id="detail-title">${highlight(item.title)}</h2><dl class="detail-meta"><dt>原著录</dt><dd>${highlight(item.bibliography)}</dd><dt>主题组</dt><dd>${highlight(item.theme)}</dd><dt>正文引用</dt><dd>${item.citationCount} 个段落 · 提取段落 ${escape(citations)}</dd></dl><p class="detail-body"><strong>来源/书目核对：</strong>${highlight(item.body)}</p><p class="detail-body"><strong>正文论据：</strong>${highlight(item.claimStatus)}。${highlight(item.claimNote)}</p><div class="detail-actions">${item.url?`<a href="${escape(item.url)}" target="_blank" rel="noopener noreferrer" class="primary-link">原尾注链接 ${icon('external')}</a>`:'<span class="missing-source">原尾注未附网址</span>'}${item.alternativeUrl?`<a href="${escape(item.alternativeUrl)}" target="_blank" rel="noopener noreferrer" class="secondary-link">补充核对入口 ${icon('external')}</a>`:''}<button class="secondary-link" data-action="share">复制资料链接</button></div>${originalReader(item)}<p class="source-note">核对日期：2026-09-26。原尾注保留原貌；补充入口是核对依据或建议新引文，并不自动替换原著录。</p></section></div>`;
     if(!detail.open)detail.showModal();
     document.body.classList.add('detail-modal-open');
     return;
   }
-  detail.innerHTML=`<div class="detail-shell text-detail"><section class="detail-content"><button class="icon-button detail-close" data-action="close-detail" aria-label="关闭资料详情">${icon('close')}</button><p><span class="${item.demo?'demo-chip':'verified-chip'}">${item.demo?'演示条目 · 非真实资料':escape(item.kind)}</span></p><h2 id="detail-title">${escape(item.title)}</h2><dl class="detail-meta"><dt>作者 / 编者</dt><dd>${escape(item.author)}</dd><dt>来源</dt><dd>${escape(item.source)}</dd><dt>发表日期</dt><dd>${escape(item.date)}</dd></dl><p class="detail-body">${escape(item.body)}</p><div class="detail-actions">${item.url?`<a href="${escape(item.url)}" target="_blank" rel="noopener noreferrer" class="primary-link">打开原文 ${icon('external')}</a>`:'<span class="missing-source">原文待补充</span>'}<button class="secondary-link" data-action="share">复制资料链接</button></div><p class="source-note">${item.demo?'接入真实文件后，此处将显示原文和出处。':`来源核验：${item.verified} · 外部原文将在新标签页打开。`}</p></section></div>`;
+  detail.innerHTML=`<div class="detail-shell text-detail"><section class="detail-content"><button class="icon-button detail-close" data-action="close-detail" aria-label="关闭资料详情">${icon('close')}</button><p><span class="${item.demo?'demo-chip':'verified-chip'}">${item.demo?'演示条目 · 非真实资料':highlight(item.kind)}</span></p><h2 id="detail-title">${highlight(item.title)}</h2><dl class="detail-meta"><dt>作者 / 编者</dt><dd>${highlight(item.author)}</dd><dt>来源</dt><dd>${highlight(item.source)}</dd><dt>发表日期</dt><dd>${escape(item.date)}</dd></dl><p class="detail-body">${highlight(item.body)}</p><div class="detail-actions">${item.url?`<a href="${escape(item.url)}" target="_blank" rel="noopener noreferrer" class="primary-link">打开原文 ${icon('external')}</a>`:'<span class="missing-source">原文待补充</span>'}<button class="secondary-link" data-action="share">复制资料链接</button></div><p class="source-note">${item.demo?'接入真实文件后，此处将显示原文和出处。':`来源核验：${item.verified} · 外部原文将在新标签页打开。`}</p></section></div>`;
   if(!detail.open) detail.showModal();
   document.body.classList.add('detail-modal-open');
 }
