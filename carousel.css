@@ -1,46 +1,11 @@
-/* The archive cards stand around a shallow tabletop turntable. */
+/* Text records remain in the spatial card carousel without a visible turntable. */
 .archive-view .rail-wrap{
-  height:510px;
+  height:485px;
   margin-top:4px;
   perspective:none;
   isolation:isolate;
 }
 .archive-view .rail-wrap::before{display:none}
-.carousel-platter{
-  position:absolute;
-  z-index:0;
-  left:50%;
-  bottom:-99px;
-  width:min(1040px,94%);
-  height:340px;
-  border-radius:50%;
-  border:2px solid #d2b27b99;
-  background:
-    radial-gradient(ellipse at 50% 43%,#b69a6730 0 8%,#342f2499 37%,#0d130fdd 68%,#8f71448a 92%,#d0ad7044 100%),
-    repeating-conic-gradient(from 0deg,#d5b9822e 0deg 1deg,transparent 1deg 15deg);
-  box-shadow:0 0 0 9px #a98c5033,0 0 0 11px #e0c48838,0 35px 40px #000b,inset 0 10px 35px #edcc8840;
-  transform:translateX(-50%) rotateX(68deg) rotateZ(var(--disc-turn,0deg));
-  transition:transform .75s cubic-bezier(.2,.8,.18,1);
-  pointer-events:none;
-}
-.carousel-platter::before{
-  content:"";
-  position:absolute;
-  inset:24px;
-  border-radius:50%;
-  border:1px solid #c5a56a77;
-  box-shadow:0 0 0 27px #161e1555,0 0 0 28px #b99d6860;
-  background:repeating-conic-gradient(from 0deg,#dec28e45 0deg 1deg,transparent 1deg 15deg);
-  mask:radial-gradient(circle,transparent 0 68%,#000 70% 100%);
-}
-.carousel-platter::after{
-  content:"";
-  position:absolute;
-  inset:41%;
-  border-radius:50%;
-  background:#bfa16a;
-  box-shadow:0 0 0 6px #2b2a1c,0 0 0 8px #bc9e61,0 6px 18px #000b;
-}
 #main .archive-view .card-rail{
   position:relative;
   z-index:1;
@@ -87,7 +52,7 @@
 .folder-opening.folder-reveal .archive-view .rail-wrap{opacity:1;transform:translateY(0) scale(1)}
 .archive-view .rail-wrap{transition:opacity .6s ease,transform .8s cubic-bezier(.22,1,.36,1)}
 @media(max-width:700px){
-  .archive-view .rail-wrap{height:475px}
+  .archive-view .rail-wrap{height:480px}
   .archive-view .material-card,
   .archive-view .material-card.active,
   .archive-view .material-card:nth-child(even):not(.active),
@@ -98,6 +63,5 @@
     height:425px;
     margin-left:-145px;
   }
-  .carousel-platter{width:760px;height:280px;bottom:-80px}
   .archive-view .rail-controls{margin-top:-18px}
 }
