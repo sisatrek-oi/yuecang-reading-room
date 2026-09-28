@@ -383,6 +383,7 @@ export class ReadingRoom {
     let object=hit?.object;
     while(object&&!object.userData.action)object=object.parent;
     this.hovered=object||null;this.canvas.style.cursor=object?'pointer':'default';
+    this.canvas.dataset.hoveredAction=object?.userData.action||'';
   }
 
   updateHotspots(){

@@ -20,3 +20,13 @@ dialog{border:1px solid #b9a88a;background:#faf6ed;color:var(--ink);padding:0;bo
 @media(max-width:600px){.suggested-searches,.theme-groups{gap:6px}.suggested-searches a,.theme-groups a{font-size:10px;padding:7px 9px}.search-tools p{font-size:9px}.theme-groups{padding-top:13px}.material-card{min-height:425px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 html[data-motion="off"] *,html[data-motion="off"] *::before,html[data-motion="off"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+/* Text catalogue: archival records carry bibliographic information without decorative imagery. */
+.text-record{min-height:350px}
+.text-record .card-open{padding:25px 26px 22px}
+.text-record h2{min-height:0;margin:14px 0 16px;font-size:22px;line-height:1.55}
+.text-record .card-bibliography{font-size:11px;line-height:1.7;color:#786b58;padding:14px 0;border-top:1px solid #cdbd9e;border-bottom:1px solid #e1d6c3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.text-record .card-summary{margin-top:15px;color:#544d42}
+.text-detail{display:block;min-height:0}
+.text-detail .detail-content{max-width:850px;margin:auto;padding:42px 46px}
+@media(max-width:600px){.text-record{min-height:350px}.text-record .card-open{padding:21px 20px}.text-record h2{font-size:19px}.text-detail .detail-content{padding:36px 23px}}

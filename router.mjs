@@ -1,4 +1,4 @@
-import {topic,getTopic,getCategories,getItems} from './data.mjs';
+import {topic,sourceTopic,getTopic,getCategories,getItems} from './data.mjs';
 export function parseRoute(hash='') {
   try {
     const raw=hash.replace(/^#/, '') || '/';
@@ -11,6 +11,9 @@ export function parseRoute(hash='') {
     if(parts[0]!=='topics'||!getTopic(parts[1])) return {page:'missing'};
     const topicId=parts[1],categories=getCategories(topicId),items=getItems(topicId);
     if(parts.length===2) return {page:'desk',topic:topicId};
+    // Previously shared image links lead back to the text catalogue after images are withdrawn.
+    if((parts.length===3&&parts[2]==='images')||(parts.length===4&&parts[2]==='items'&&/^(visual-|image-demo-)/.test(parts[3])))
+      return {page:'category',topic:topicId,category:topicId===sourceTopic.id?'sources':'literature',legacyImage:true};
     if(parts.length===4&&parts[2]==='items') {
       const item=items.find(x=>x.id===parts[3]);
       return item?{page:'item',topic:topicId,item:item.id,category:item.category,focus:item.id,query,group}:{page:'missing'};
